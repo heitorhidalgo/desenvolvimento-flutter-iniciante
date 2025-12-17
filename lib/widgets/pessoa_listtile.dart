@@ -1,12 +1,12 @@
 import 'package:desenvolvimento_flutter_iniciante/extensions/extensions.dart';
+import 'package:desenvolvimento_flutter_iniciante/models/pessoa.dart';
 import 'package:flutter/material.dart';
-import '../models/pessoa.dart';
 
 class PessoaListTile extends StatefulWidget {
   final Pessoa pessoa;
   const PessoaListTile({
     super.key,
-    required this.pessoa
+    required this.pessoa,
   });
 
   @override
@@ -14,7 +14,6 @@ class PessoaListTile extends StatefulWidget {
 }
 
 class _PessoaListTileState extends State<PessoaListTile> {
-
   @override
   void initState() {
     print("Iniciando pessoa: ${widget.pessoa.id}");
@@ -24,19 +23,19 @@ class _PessoaListTileState extends State<PessoaListTile> {
   @override
   Widget build(BuildContext context) {
     return Card(
-      color: Colors.white70,
+      color: Colors.deepOrangeAccent,
       child: ListTile(
         leading: Text("Id: ${widget.pessoa.id}"),
         title: Text(widget.pessoa.nome),
         subtitle: Text("Peso: ${widget.pessoa.peso.paraPeso()}"),
-        trailing: Text("Altura: ${widget.pessoa.altura}"),
+        trailing: Text("Altura: ${widget.pessoa.altura.paraAltura()}"),
       ),
     );
   }
 
   @override
   void dispose() {
-    print("Removendo pessoa: ${widget.pessoa.id}");
+    print("removendo pessoa: ${widget.pessoa.id}");
     super.dispose();
   }
 }
