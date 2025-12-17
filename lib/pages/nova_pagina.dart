@@ -1,3 +1,4 @@
+import 'package:desenvolvimento_flutter_iniciante/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
 class NovaPagina extends StatelessWidget {
@@ -9,7 +10,7 @@ class NovaPagina extends StatelessWidget {
       title: Text("Nova Página"),
     ),
       body: Center(child: ElevatedButton(onPressed: (){
-        Navigator.of(context).pop();
+        context.pop();
       }, child: Text("Voltar"),
       ),
       ),
