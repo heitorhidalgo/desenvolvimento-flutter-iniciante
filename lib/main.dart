@@ -1,5 +1,4 @@
-import 'package:desenvolvimento_flutter_iniciante/models/pessoa.dart';
-import 'package:desenvolvimento_flutter_iniciante/widgets/pessoa_listtile.dart';
+import 'package:desenvolvimento_flutter_iniciante/widgets/listview_builder.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -19,14 +18,7 @@ class MyApp extends StatelessWidget {
       ),
       home: Scaffold(
         appBar: AppBar(title: Text("Meu primeiro App.")),
-        body: PessoaListTile(
-            pessoa: Pessoa(
-                id: 1,
-                nome: "Heitor Hidalgo",
-                altura: 170,
-                peso: 60.0,
-            )
-        ),
+        body: ListaPessoa()
       ),
     );
   }
