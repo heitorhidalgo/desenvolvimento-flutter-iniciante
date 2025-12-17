@@ -1,4 +1,3 @@
-import 'dart:math';
 import 'package:faker/faker.dart';
 import '../models/pessoa.dart';
 
@@ -8,7 +7,7 @@ List<Pessoa> gerarPessoa(int quantidade){
     quantidade,
       (index) => Pessoa(id: index,
           nome: faker.person.name(),
-          altura: Random().nextInt(200),
+          altura: faker.randomGenerator.integer(200, min: 150),
           peso: faker.randomGenerator.decimal(min: 50, scale: 50)
       )
   );
