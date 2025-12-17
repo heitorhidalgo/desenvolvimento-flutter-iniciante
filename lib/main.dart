@@ -1,4 +1,4 @@
-import 'package:desenvolvimento_flutter_iniciante/widgets/lista_pessoas.dart';
+import 'package:desenvolvimento_flutter_iniciante/pages/home_page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -28,12 +28,7 @@ class MyApp extends StatelessWidget {
               color: Colors.black, fontSize: 20, fontWeight: FontWeight.bold),
         ),
       ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text("Dados dos usuários"),
-        ),
-        body: ListaPessoas(),
-      ),
+      home: HomePage(),
     );
   }
 }
