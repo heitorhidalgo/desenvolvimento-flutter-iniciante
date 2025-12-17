@@ -16,7 +16,7 @@ class HomePage extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,
         onPressed: (){
-          context.pushNamed(Routes.novaPagina);
+          context.pushNamed(Routes.criarPessoaPage);
         },
         child: Icon(Icons.navigate_next),
       ),

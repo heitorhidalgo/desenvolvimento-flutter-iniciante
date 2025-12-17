@@ -1,8 +1,8 @@
 import 'package:desenvolvimento_flutter_iniciante/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 
-class NovaPagina extends StatelessWidget {
-  const NovaPagina ({super.key});
+class CriarPessoaPage extends StatelessWidget {
+  const CriarPessoaPage ({super.key});
 
   @override
   Widget build(BuildContext context) {
