@@ -1,3 +1,4 @@
+import 'package:desenvolvimento_flutter_iniciante/extensions/extensions.dart';
 import 'package:flutter/material.dart';
 import '../models/pessoa.dart';
 
@@ -27,8 +28,8 @@ class _PessoaListTileState extends State<PessoaListTile> {
       child: ListTile(
         leading: Text("Id: ${widget.pessoa.id}"),
         title: Text(widget.pessoa.nome),
-        subtitle: Text("Peso: ${widget.pessoa.peso.toStringAsFixed(1)} kg"),
-        trailing: Text("Altura: ${widget.pessoa.altura} cm"),
+        subtitle: Text("Peso: ${widget.pessoa.peso.paraPeso()}"),
+        trailing: Text("Altura: ${widget.pessoa.altura}"),
       ),
     );
   }
