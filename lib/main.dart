@@ -23,9 +23,15 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class MeuStatelessWidget extends StatelessWidget {
+class MeuStatelessWidget extends StatefulWidget {
   const MeuStatelessWidget({super.key});
 
+  @override
+  State<MeuStatelessWidget> createState() => _MeuStatelessWidgetState();
+}
+
+class _MeuStatelessWidgetState extends State<MeuStatelessWidget> {
+  int count = 0;
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -33,19 +39,57 @@ class MeuStatelessWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Row(
-          mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Text(
-                  "Meu primeiro app.",
+                "Count: $count",
                 style: TextStyle(fontSize: 24,
-                color: Colors.blue),
-              )]),
+                    color: Colors.blue),
+              )
+            ]),
         SizedBox(
-          height: 16
+            height: 16
         ),
         ElevatedButton(
-            onPressed: () {},
+            onPressed: () {
+              setState(() {
+                count++;
+              });
+            },
             child: Text("Clique aqui.")),
+        MeuStatefulWidget(callback: (){
+          setState(() {
+            count++;
+          });
+        })
+      ],
+    );
+  }
+}
+
+class MeuStatefulWidget extends StatefulWidget {
+  final void Function() callback;
+  const MeuStatefulWidget({super.key, required this.callback});
+
+  @override
+  State<MeuStatefulWidget> createState() => _MeuStatefulWidgetState();
+}
+
+class _MeuStatefulWidgetState extends State<MeuStatefulWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        SizedBox(
+          height: 16),
+        ElevatedButton(
+            onPressed: (){
+              widget.callback.call();
+            },
+            child: Text(
+                "Botão de baixo",
+          ),
+        ),
       ],
     );
   }
