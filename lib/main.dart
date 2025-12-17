@@ -15,6 +15,12 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         useMaterial3: false,
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        textTheme: TextTheme(
+            bodyMedium: TextStyle(color: Colors.white70),
+            titleMedium: TextStyle(color: Colors.black, fontSize: 20,
+            fontWeight: FontWeight.bold,
+            ),
+        ),
       ),
       home: Scaffold(
         appBar: AppBar(title: Text("Meu primeiro App.")),
