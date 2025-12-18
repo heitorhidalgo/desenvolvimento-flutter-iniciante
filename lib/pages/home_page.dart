@@ -27,9 +27,17 @@ class _HomePageState extends State<HomePage> {
 
   void _onPessoaMensagem(){
     print(pessoaController.mensagemNotifier.value);
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.blueGrey,
+        content: Text(pessoaController.mensagemNotifier.value)));
   }
 
   void _onThemeMensagem(){
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        backgroundColor: Colors.blueGrey,
+        content: Text(themeController.mensagemNotifier.value)));
     print(themeController.mensagemNotifier.value);
   }
 
