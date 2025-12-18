@@ -1,6 +1,7 @@
 import 'package:desenvolvimento_flutter_iniciante/controllers/pessoa_controller.dart';
 import 'package:desenvolvimento_flutter_iniciante/models/criar_pessoa_dto.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import '../routes/routes.dart';
 import '../widgets/lista_pessoas.dart';
 
@@ -12,7 +13,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PessoaController pessoaController = PessoaController();
+  final pessoaController = GetIt.instance<PessoaController>();
+
+  @override
+  void initState() {
+    pessoaController.addListener((){
+      setState(() {});
+    });
+    super.initState();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -22,10 +32,6 @@ class _HomePageState extends State<HomePage> {
       ),
       body: ListaPessoas(
         pessoas: pessoaController.pessoas,
-        onDeletePessoa: (pessoa) {
-          pessoaController.removerPessoa(pessoa);
-          setState(() {});
-        },
       ),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.blueGrey,

@@ -1,12 +1,10 @@
 import 'package:desenvolvimento_flutter_iniciante/models/criar_pessoa_dto.dart';
-
+import 'package:flutter/material.dart';
 import '../models/pessoa.dart';
 
-class PessoaController {
+class PessoaController extends ChangeNotifier {
   List<Pessoa> _pessoas = [];
-
   List<Pessoa> get pessoas => _pessoas;
-
 
   void adicionarPessoa(CriarPessoaDto criarPessoa) {
     final pessoa = Pessoa(
@@ -20,5 +18,6 @@ class PessoaController {
 
   void removerPessoa(Pessoa pessoa) {
     _pessoas.remove(pessoa);
+    notifyListeners();
   }
 }

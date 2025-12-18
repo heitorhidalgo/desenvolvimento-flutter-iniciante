@@ -23,7 +23,7 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
   Widget build(BuildContext context) {
 
     return Scaffold(appBar: AppBar(
-      title: Text("Nova Página"),
+      title: Text("Cadastro de usuário"),
     ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
