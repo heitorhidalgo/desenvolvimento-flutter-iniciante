@@ -29,7 +29,7 @@ class CustomTile extends StatelessWidget {
         padding: EdgeInsets.all(16),
         margin: EdgeInsets.all(2),
         decoration:
-        BoxDecoration(color: color, borderRadius: BorderRadius.circular(8)),
+        BoxDecoration(color: Colors.black12, borderRadius: BorderRadius.circular(8)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.center,
