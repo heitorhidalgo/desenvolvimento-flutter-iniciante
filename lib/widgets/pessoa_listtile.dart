@@ -26,7 +26,7 @@ class _PessoaListTileState extends State<PessoaListTile> {
       color: Colors.deepOrangeAccent,
       child: ListTile(
         leading: Text("Id: ${widget.pessoa.id}"),
-        title: Text(widget.pessoa.nome),
+        title: Text("Nome: ${widget.pessoa.nome}"),
         subtitle: Text("Peso: ${widget.pessoa.peso.paraPeso()}"),
         trailing: Text("Altura: ${widget.pessoa.altura.paraAltura()}"),
       ),
