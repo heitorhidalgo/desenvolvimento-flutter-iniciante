@@ -1,6 +1,6 @@
+import 'package:desenvolvimento_flutter_iniciante/controllers/pessoa_controller.dart';
 import 'package:desenvolvimento_flutter_iniciante/models/criar_pessoa_dto.dart';
 import 'package:flutter/material.dart';
-import '../models/pessoa.dart';
 import '../routes/routes.dart';
 import '../widgets/lista_pessoas.dart';
 
@@ -12,7 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  List<Pessoa> pessoas = [];
+  final PessoaController pessoaController = PessoaController();
 
   @override
   Widget build(BuildContext context) {
@@ -21,9 +21,9 @@ class _HomePageState extends State<HomePage> {
         title: Text("Dados dos usuários"),
       ),
       body: ListaPessoas(
-        pessoas: pessoas,
+        pessoas: pessoaController.pessoas,
         onDeletePessoa: (pessoa) {
-          pessoas.remove(pessoa);
+          pessoaController.removerPessoa(pessoa);
           setState(() {});
         },
       ),
@@ -33,14 +33,8 @@ class _HomePageState extends State<HomePage> {
           final result = await Navigator.of(context).pushNamed(Routes.criarPessoaPage);
           if(result != null){
             final pessoaDto = result as CriarPessoaDto;
+            pessoaController.adicionarPessoa(pessoaDto);
 
-            final pessoa = Pessoa(
-              id: pessoas.length + 1,
-              nome: pessoaDto.nome,
-              altura: pessoaDto.altura,
-              peso: pessoaDto.peso,
-            );
-            pessoas.add(pessoa);
             setState(() {});
           }
           print("resultado: $result");
