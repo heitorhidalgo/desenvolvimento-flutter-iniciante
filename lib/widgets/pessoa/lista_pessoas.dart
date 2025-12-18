@@ -1,7 +1,7 @@
-import 'package:desenvolvimento_flutter_iniciante/widgets/custom_person_tile.dart';
+import 'package:desenvolvimento_flutter_iniciante/widgets/pessoa/custom_person_tile.dart';
 import 'package:flutter/material.dart';
 
-import '../models/pessoa.dart';
+import '../../models/pessoa.dart';
 
 class ListaPessoas extends StatelessWidget {
   final List<Pessoa> pessoas;

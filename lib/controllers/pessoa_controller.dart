@@ -14,6 +14,7 @@ class PessoaController extends ChangeNotifier {
       peso: criarPessoa.peso,
     );
     _pessoas.add(pessoa);
+    notifyListeners();
   }
 
   void removerPessoa(Pessoa pessoa) {
