@@ -6,11 +6,25 @@ import 'package:get_it/get_it.dart';
 
 import 'controllers/theme_controller.dart';
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final themeController = GetIt.instance<ThemeController>();
+
+  @override
+  void initState() {
+    super.initState();
+    themeController.getTheme();
+  }
+
   @override
   Widget build(BuildContext context) {
-    final themeController = GetIt.instance<ThemeController>();
+
     return ListenableBuilder(
         listenable: themeController,
         builder: (context, child){
