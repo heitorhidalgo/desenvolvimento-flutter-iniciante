@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../models/criar_pessoa_dto.dart';
 
@@ -47,11 +48,16 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
                 decoration: InputDecoration(
                   label: Text("Nome"),
                   border: OutlineInputBorder(),
+                  suffixText: ("Ex: João Guilherme"),
                 ),
               ),
               gap,
               TextFormField(
                 autovalidateMode: AutovalidateMode.onUserInteraction,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                inputFormatters: [
+                  FilteringTextInputFormatter.allow(RegExp(r'^\d+[,]?\d{0,1}'))
+                ],
                 validator: (value) {
                   if (value?.isEmpty == true) {
                     return "Por favor, preencha o peso!";
@@ -62,10 +68,16 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
                 decoration: InputDecoration(
                   label: Text("Peso"),
                   border: OutlineInputBorder(),
+                  suffixText: ("Kg (Ex: 70,5)"),
                 ),
               ),
               gap,
               TextFormField(
+                keyboardType: TextInputType.number,
+                inputFormatters: [
+                  FilteringTextInputFormatter.digitsOnly,
+                ],
+
                 autovalidateMode: AutovalidateMode.onUserInteraction,
                 validator: (value) {
                   if (value?.isEmpty == true) {
@@ -77,6 +89,7 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
                 decoration: InputDecoration(
                   label: Text("Altura"),
                   border: OutlineInputBorder(),
+                  suffixText: ("cm (Ex: 170)"),
                 ),
               ),
               gap,
@@ -89,7 +102,7 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
                           final CriarPessoa = CriarPessoaDto(
                               nome: nomeController.text,
                               altura: int.parse(alturaController.text),
-                              peso: double.parse(pesoController.text),
+                              peso: double.parse(pesoController.text.replaceAll(",", ".")),
                           );
                         }
                       },
@@ -103,5 +116,13 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
         ),
       )
     );
+  }
+
+  @override
+  void dispose() {
+    nomeController.dispose();
+    pesoController.dispose();
+    alturaController.dispose();
+    super.dispose();
   }
 }
