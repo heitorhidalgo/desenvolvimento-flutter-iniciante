@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import '../controllers/theme_controller.dart';
 import '../routes/routes.dart';
+import '../states/messages_state.dart';
 import '../widgets/pessoa/lista_pessoas.dart';
 
 class HomePage extends StatefulWidget {
@@ -16,6 +17,40 @@ class _HomePageState extends State<HomePage> {
   final pessoaController = GetIt.instance<PessoaController>();
   final ThemeController themeController = GetIt.instance<ThemeController>();
 
+    @override
+    Widget build(BuildContext context) {
+      return Scaffold(
+        drawer: Drawer(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Switch(
+                value: themeController.darkTheme,
+                onChanged: (value) {
+                  themeController.toggleTheme(value);
+                },
+              ),
+              Text("Tema escuro"),
+            ],
+          ),
+        ),
+        appBar: AppBar(title: Text("Dados dos usuários")),
+        body: ListenableBuilder(
+          listenable: pessoaController,
+          builder: (context, child) {
+            return ListaPessoas(pessoas: pessoaController.pessoas);
+          },
+        ),
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Colors.blueGrey,
+          onPressed: () {
+            Navigator.of(context).pushNamed(Routes.criarPessoaPage);
+          },
+          child: Icon(Icons.navigate_next),
+        ),
+      );
+    }
+
   @override
   void initState() {
     themeController.mensagemNotifier
@@ -25,60 +60,46 @@ class _HomePageState extends State<HomePage> {
     super.initState();
   }
 
-  void _onPessoaMensagem(){
-    print(pessoaController.mensagemNotifier.value);
+  void _onPessoaMensagem() {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.blueGrey,
-        content: Text(pessoaController.mensagemNotifier.value)));
+    final value = pessoaController.mensagemNotifier.value;
+
+    if (value is SuccessMessage) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.greenAccent,
+          content: Text(value.message)));
+    } else if (value is ErrorMessage) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text(value.message)));
+    }
   }
 
-  void _onThemeMensagem(){
+  void _onThemeMensagem() {
     ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        backgroundColor: Colors.blueGrey,
-        content: Text(themeController.mensagemNotifier.value)));
-    print(themeController.mensagemNotifier.value);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Switch(
-              value: themeController.darkTheme,
-              onChanged: (value) {
-                themeController.toggleTheme(value);
-              },
-            ),
-            Text("Tema escuro"),
-          ],
+    final value = themeController.mensagemNotifier.value;
+    if (value is SuccessMessage) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.greenAccent,
+          content: Text(value.message),
         ),
-      ),
-      appBar: AppBar(title: Text("Dados dos usuários")),
-      body: ListenableBuilder(
-        listenable: pessoaController,
-        builder: (context, child) {
-          return ListaPessoas(pessoas: pessoaController.pessoas);
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueGrey,
-        onPressed: () {
-          Navigator.of(context).pushNamed(Routes.criarPessoaPage);
-        },
-        child: Icon(Icons.navigate_next),
-      ),
-    );
-  }
+      );
+    } else if(value is ErrorMessage){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text(value.message),
+        ),
+      );
+    }
 
-  @override
-  void dispose() {
-    pessoaController.mensagemNotifier.removeListener(_onPessoaMensagem);
-    themeController.mensagemNotifier.removeListener(_onThemeMensagem);
-    super.dispose();
-  }
+
+    @override
+    void dispose() {
+      pessoaController.mensagemNotifier.removeListener(_onPessoaMensagem);
+      themeController.mensagemNotifier.removeListener(_onThemeMensagem);
+      super.dispose();
+    }
+    }
 }

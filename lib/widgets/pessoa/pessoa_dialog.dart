@@ -3,7 +3,6 @@ import 'package:desenvolvimento_flutter_iniciante/models/pessoa.dart';
 import 'package:desenvolvimento_flutter_iniciante/widgets/core/default_dialog_container.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
 import '../../controllers/pessoa_controller.dart';
 
 class PessoaDialog extends StatelessWidget {
