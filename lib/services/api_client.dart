@@ -1,3 +1,4 @@
+import 'package:desenvolvimento_flutter_iniciante/models/criar_pessoa_dto.dart';
 import 'package:dio/dio.dart';
 import '../models/pessoa.dart';
 
@@ -12,16 +13,21 @@ class ApiClient {
       final pessoasJson = data as List;
 
       return pessoasJson
-          .map(
-            (pessoasJson) => Pessoa(
-              id: pessoasJson["id"],
-              nome: pessoasJson["nome"],
-              altura: pessoasJson["altura"],
-              peso: pessoasJson["peso"],
-            ),
-          )
+          .map((pessoasJson) => Pessoa.fromJson(pessoasJson))
           .toList();
     }
     throw Exception("Ocorreu um erro ao buscar pessoas");
+  }
+
+  Future<Pessoa> post(CriarPessoaDto criarPessoa) async {
+    final request = await dio.post(
+      "http://localhost:3000/pessoas",
+      data: criarPessoa.toJson(),
+    );
+
+    if (request.statusCode == 201) {
+      return Pessoa.fromJson(request.data);
+    }
+    throw Exception("Ocorreu um erro ao adicionar pessoa");
   }
 }

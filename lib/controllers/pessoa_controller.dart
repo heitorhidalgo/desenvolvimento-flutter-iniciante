@@ -19,10 +19,11 @@ class PessoaController extends ChangeNotifier {
 
   bool get loading => _loading;
 
-  void ListarPessoas() async {
+  void listarPessoas() async {
     _loading = true;
     notifyListeners();
     try {
+      await Future.delayed(Duration(milliseconds: 1));
       final pessoas = await apiClient.get();
       _pessoas = pessoas;
     } on Exception catch (error) {
@@ -32,14 +33,9 @@ class PessoaController extends ChangeNotifier {
     }
   }
 
-  void adicionarPessoa(CriarPessoaDto criarPessoa) {
+  void adicionarPessoa(CriarPessoaDto criarPessoa) async {
     try {
-      final pessoa = Pessoa(
-        id: (_pessoas.length + 1).toString(),
-        nome: criarPessoa.nome,
-        altura: criarPessoa.altura,
-        peso: criarPessoa.peso,
-      );
+      final pessoa = await apiClient.post(criarPessoa);
 
       _pessoas.add(pessoa);
       mensagemNotifier.value = SuccessMessage(
