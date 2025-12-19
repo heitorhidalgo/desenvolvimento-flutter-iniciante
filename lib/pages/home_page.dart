@@ -15,50 +15,15 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final pessoaController = GetIt.instance<PessoaController>();
-  final ThemeController themeController = GetIt.instance<ThemeController>();
+  final themeController = GetIt.instance<ThemeController>();
 
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      drawer: Drawer(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Switch(
-              value: themeController.darkTheme,
-              onChanged: (value) {
-                themeController.toggleTheme(value);
-              },
-            ),
-            Text("Tema escuro"),
-          ],
-        ),
-      ),
-      appBar: AppBar(title: Text("Dados dos usuários")),
-      body: ListenableBuilder(
-        listenable: pessoaController,
-        builder: (context, child) {
-          if(pessoaController.loading){
-            return Center(
-              child: CircularProgressIndicator(),
-            );
-          }
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: ListaPessoas(pessoas: pessoaController.pessoas),
-          );
-        },
-      ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.blueGrey,
-        onPressed: () {
-          Navigator.of(context).pushNamed(Routes.criarPessoaPage);
-        },
-        child: Icon(Icons.account_box,
-        color: Colors.white,
-        ),
-      ),
-    );
+  void initState() {
+    super.initState();
+    pessoaController.listarPessoas();
+
+    themeController.mensagemNotifier.addListener(_onThemeMensagem);
+    pessoaController.mensagemNotifier.addListener(_onPessoaMensagem);
   }
 
   @override
@@ -68,52 +33,117 @@ class _HomePageState extends State<HomePage> {
     super.dispose();
   }
 
-  @override
-  void initState() {
-    pessoaController.listarPessoas();
-    themeController.mensagemNotifier.addListener(_onThemeMensagem);
-    pessoaController.mensagemNotifier.addListener(_onPessoaMensagem);
-    super.initState();
-  }
-
   void _onPessoaMensagem() {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    final value = pessoaController.mensagemNotifier.value;
-
-    if (value is SuccessMessage) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.greenAccent,
-          content: Text(value.message),
-        ),
-      );
-    } else if (value is ErrorMessage) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          backgroundColor: Colors.redAccent,
-          content: Text(value.message),
-        ),
-      );
-    }
+    _tratarMensagem(pessoaController.mensagemNotifier.value);
   }
 
   void _onThemeMensagem() {
+    _tratarMensagem(themeController.mensagemNotifier.value);
+  }
+
+  void _tratarMensagem(dynamic value) {
+    if (!mounted) return;
+
     ScaffoldMessenger.of(context).clearSnackBars();
-    final value = themeController.mensagemNotifier.value;
+
     if (value is SuccessMessage) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.greenAccent,
+          backgroundColor: Colors.green,
           content: Text(value.message),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     } else if (value is ErrorMessage) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          backgroundColor: Colors.redAccent,
+          backgroundColor: Colors.red,
           content: Text(value.message),
+          behavior: SnackBarBehavior.floating,
         ),
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ListenableBuilder(
+              listenable: themeController,
+              builder: (context, child) {
+                return Switch(
+                  value: themeController.darkTheme,
+                  onChanged: (value) {
+                    themeController.toggleTheme(value);
+                  },
+                );
+              },
+            ),
+            const Text("Tema escuro"),
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        title: const Text("Dados dos usuários"),
+        actions: [
+          IconButton(
+            onPressed: () => pessoaController.listarPessoas(),
+            icon: const Icon(Icons.refresh),
+          )
+        ],
+      ),
+      body: ListenableBuilder(
+        listenable: pessoaController,
+        builder: (context, child) {
+          if (pessoaController.loading) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+
+          if (pessoaController.pessoas.isEmpty) {
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.list_alt, size: 60, color: Colors.grey),
+                  const SizedBox(height: 10),
+                  const Text("Nenhum usuário encontrado."),
+                  TextButton(
+                      onPressed: () => pessoaController.listarPessoas(),
+                      child: const Text("Tentar novamente")
+                  )
+                ],
+              ),
+            );
+          }
+
+          return RefreshIndicator(
+            onRefresh: () async {
+              await pessoaController.listarPessoas();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: ListaPessoas(pessoas: pessoaController.pessoas),
+            ),
+          );
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueGrey,
+        onPressed: () async {
+          await Navigator.of(context).pushNamed(Routes.criarPessoaPage);
+          pessoaController.listarPessoas();
+        },
+        child: const Icon(
+          Icons.person_add,
+          color: Colors.white,
+        ),
+      ),
+    );
   }
 }

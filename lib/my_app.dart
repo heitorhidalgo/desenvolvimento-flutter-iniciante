@@ -3,7 +3,6 @@ import 'package:desenvolvimento_flutter_iniciante/routes/routes.dart';
 import 'package:desenvolvimento_flutter_iniciante/themes/themes.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-
 import 'controllers/theme_controller.dart';
 
 class MyApp extends StatefulWidget {
@@ -24,17 +23,23 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-
     return ListenableBuilder(
-        listenable: themeController,
-        builder: (context, child){
+      listenable: themeController,
+      builder: (context, child) {
         return MaterialApp(
+          title: 'Gestão de Pessoas',
+          debugShowCheckedModeBanner: false,
+
           initialRoute: Routes.intialRoute,
           routes: routes,
-          title: 'Flutter Demo',
-          theme: themeController.darkTheme == false ? lightTheme : darkTheme,
+
+          theme: lightTheme,
+
+          darkTheme: darkTheme,
+
+          themeMode: themeController.darkTheme ? ThemeMode.dark : ThemeMode.light,
         );
-      }
+      },
     );
   }
 }

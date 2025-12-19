@@ -4,8 +4,9 @@ import '../models/pessoa.dart';
 
 class ApiClient {
   final Dio dio;
-
   final String apiUrl;
+
+  static const String _endpoint = '/pessoas';
 
   ApiClient({
     required this.dio,
@@ -13,51 +14,67 @@ class ApiClient {
   });
 
   Future<List<Pessoa>> get() async {
-    final request = await dio.get("$apiUrl/pessoas");
+    try {
+      final response = await dio.get("$apiUrl$_endpoint");
 
-    if (request.statusCode == 200) {
-      final data = request.data;
-      final pessoasJson = data as List;
+      final data = response.data;
 
-      return pessoasJson
-          .map((pessoasJson) => Pessoa.fromJson(pessoasJson))
-          .toList();
+      if (data is List) {
+        return data.map((item) => Pessoa.fromJson(item)).toList();
+      } else {
+        throw Exception("Formato de dados inválido: Esperava uma lista.");
+      }
+    } on DioException catch (e) {
+      throw _tratarErroDio(e, "buscar pessoas");
     }
-    throw Exception("Ocorreu um erro ao buscar pessoas");
   }
 
   Future<Pessoa> post(CriarPessoaDto criarPessoa) async {
-    final request = await dio.post(
-      "$apiUrl/pessoas",
-      data: criarPessoa.toJson(),
-    );
+    try {
+      final response = await dio.post(
+        "$apiUrl$_endpoint",
+        data: criarPessoa.toJson(),
+      );
 
-    if (request.statusCode == 201) {
-      return Pessoa.fromJson(request.data);
+      return Pessoa.fromJson(response.data);
+    } on DioException catch (e) {
+      throw _tratarErroDio(e, "adicionar pessoa");
     }
-    throw Exception("Ocorreu um erro ao adicionar pessoa");
   }
 
   Future<void> delete(Pessoa pessoa) async {
-    final request = await dio.delete(
-      "$apiUrl/pessoas/${pessoa.id}",
-    );
-
-    if (request.statusCode == 200) {
-      return;
+    try {
+      await dio.delete("$apiUrl$_endpoint/${pessoa.id}");
+    } on DioException catch (e) {
+      throw _tratarErroDio(e, "remover pessoa");
     }
-    throw Exception("Ocorreu um erro ao remover pessoa");
   }
 
   Future<void> put(Pessoa pessoa) async {
-    final request = await dio.put(
-      "$apiUrl/pessoas/${pessoa.id}",
-      data: pessoa.toJson(),
-    );
-
-    if (request.statusCode == 200) {
-      return;
+    try {
+      await dio.put(
+        "$apiUrl$_endpoint/${pessoa.id}",
+        data: pessoa.toJson(),
+      );
+    } on DioException catch (e) {
+      throw _tratarErroDio(e, "atualizar pessoa");
     }
-    throw Exception("Ocorreu um erro ao atualizar pessoa");
+  }
+
+  Exception _tratarErroDio(DioException e, String acao) {
+    if (e.type == DioExceptionType.connectionTimeout ||
+        e.type == DioExceptionType.receiveTimeout) {
+      return Exception("Tempo limite excedido ao $acao. Verifique sua conexão.");
+    }
+
+    if (e.type == DioExceptionType.connectionError) {
+      return Exception("Sem conexão com a internet.");
+    }
+
+    if (e.response != null) {
+      return Exception("Erro ${e.response?.statusCode} ao $acao: ${e.response?.statusMessage}");
+    }
+
+    return Exception("Erro desconhecido ao $acao: ${e.message}");
   }
 }

@@ -1,96 +1,110 @@
+import 'package:flutter/material.dart';
 import 'package:desenvolvimento_flutter_iniciante/models/criar_pessoa_dto.dart';
 import 'package:desenvolvimento_flutter_iniciante/states/messages_state.dart';
-import 'package:flutter/material.dart';
 import '../models/pessoa.dart';
 import '../services/api_client.dart';
 
 class PessoaController extends ChangeNotifier {
-  List<Pessoa> _pessoas = [];
-
-  List<Pessoa> get pessoas => _pessoas;
-
   final ApiClient apiClient;
 
-  ValueNotifier<MessagesStates> mensagemNotifier = ValueNotifier(
+  PessoaController({required this.apiClient});
+
+  List<Pessoa> _pessoas = [];
+  List<Pessoa> get pessoas => _pessoas;
+
+  bool _loading = false;
+  bool get loading => _loading;
+
+  final ValueNotifier<MessagesStates> mensagemNotifier = ValueNotifier(
     IddleMessage(),
   );
 
-  bool _loading = false;
+  Future<void> listarPessoas() async {
+    _setLoading(true);
 
-  PessoaController({
-    required this.apiClient
-  });
-
-  bool get loading => _loading;
-
-  void listarPessoas() async {
-    _loading = true;
-    notifyListeners();
     try {
-      await Future.delayed(Duration(milliseconds: 1));
-      final pessoas = await apiClient.get();
-
-      _pessoas = pessoas;
-    } on Exception catch (_) {
+      final resultado = await apiClient.get();
+      _pessoas = resultado;
+    } catch (e) {
+      debugPrint('Erro ao listar pessoas: $e');
       mensagemNotifier.value = ErrorMessage(
-        message: "Ocorreu um erro ao buscar pessoas.",
+        message: "Ocorreu um erro ao buscar os dados.",
       );
     } finally {
-      _loading = false;
-      notifyListeners();
+      _setLoading(false);
     }
   }
 
- Future <void> adicionarPessoa(CriarPessoaDto criarPessoa) async {
-    try {
-      final pessoa = await apiClient.post(criarPessoa);
+  Future<void> adicionarPessoa(CriarPessoaDto criarPessoa) async {
+    _setLoading(true);
 
-      _pessoas.add(pessoa);
+    try {
+      final novaPessoa = await apiClient.post(criarPessoa);
+
+      _pessoas.add(novaPessoa);
+
       mensagemNotifier.value = SuccessMessage(
         message: "Pessoa adicionada com sucesso.",
       );
-      notifyListeners();
-    } on Exception catch(_) {
+    } catch (e) {
+      debugPrint('Erro ao adicionar pessoa: $e');
       mensagemNotifier.value = ErrorMessage(
-        message: "Ocorreu um erro ao adicionar pessoa",
+        message: "Erro ao adicionar pessoa. Tente novamente.",
       );
+    } finally {
+      _setLoading(false);
     }
   }
 
-  Future<void> atualizarPessoa(Pessoa atualizarPessoa) async {
+  Future<void> atualizarPessoa(Pessoa pessoaAtualizada) async {
+    _setLoading(true);
 
     try {
-      await apiClient.put(atualizarPessoa);
+      await apiClient.put(pessoaAtualizada);
 
-      final pessoaIndex = _pessoas.indexWhere((e) => e.id == atualizarPessoa.id);
+      final index = _pessoas.indexWhere((e) => e.id == pessoaAtualizada.id);
 
-      _pessoas[pessoaIndex] = atualizarPessoa;
-
-      mensagemNotifier.value = SuccessMessage(
-        message: "Pessoa atualizada com sucesso.",
-      );
-    } on Exception catch(_) {
+      if (index != -1) {
+        _pessoas[index] = pessoaAtualizada;
+        mensagemNotifier.value = SuccessMessage(
+          message: "Pessoa atualizada com sucesso.",
+        );
+      } else {
+        listarPessoas();
+      }
+    } catch (e) {
+      debugPrint('Erro ao atualizar pessoa: $e');
       mensagemNotifier.value = ErrorMessage(
-        message: "Ocorreu um erro ao atualizar pessoa",
+        message: "Erro ao atualizar os dados.",
       );
-    }finally{
-      notifyListeners();
+    } finally {
+      _setLoading(false);
     }
-
   }
 
   Future<void> removerPessoa(Pessoa pessoa) async {
+    _setLoading(true);
+
     try {
       await apiClient.delete(pessoa);
 
       _pessoas.remove(pessoa);
+
       mensagemNotifier.value = SuccessMessage(
         message: "Pessoa removida com sucesso.",
       );
-    } on Exception catch (_) {
-
+    } catch (e) {
+      debugPrint('Erro ao remover pessoa: $e');
+      mensagemNotifier.value = ErrorMessage(
+        message: "Não foi possível remover esta pessoa.",
+      );
     } finally {
-      notifyListeners();
+      _setLoading(false);
     }
+  }
+
+  void _setLoading(bool value) {
+    _loading = value;
+    notifyListeners();
   }
 }
