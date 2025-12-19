@@ -8,8 +8,8 @@ class ApiClient {
     final request = await dio.get("http://localhost:3000/pessoas");
 
     if (request.statusCode == 200) {
-      final data = request.data as List;
-      final pessoasJson = data as List<Map<String, dynamic>>;
+      final data = request.data;
+      final pessoasJson = data as List;
 
       return pessoasJson
           .map(

@@ -17,39 +17,39 @@ class _HomePageState extends State<HomePage> {
   final pessoaController = GetIt.instance<PessoaController>();
   final ThemeController themeController = GetIt.instance<ThemeController>();
 
-    @override
-    Widget build(BuildContext context) {
-      return Scaffold(
-        drawer: Drawer(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Switch(
-                value: themeController.darkTheme,
-                onChanged: (value) {
-                  themeController.toggleTheme(value);
-                },
-              ),
-              Text("Tema escuro"),
-            ],
-          ),
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: Drawer(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Switch(
+              value: themeController.darkTheme,
+              onChanged: (value) {
+                themeController.toggleTheme(value);
+              },
+            ),
+            Text("Tema escuro"),
+          ],
         ),
-        appBar: AppBar(title: Text("Dados dos usuários")),
-        body: ListenableBuilder(
-          listenable: pessoaController,
-          builder: (context, child) {
-            return ListaPessoas(pessoas: pessoaController.pessoas);
-          },
-        ),
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Colors.blueGrey,
-          onPressed: () {
-            Navigator.of(context).pushNamed(Routes.criarPessoaPage);
-          },
-          child: Icon(Icons.navigate_next),
-        ),
-      );
-    }
+      ),
+      appBar: AppBar(title: Text("Dados dos usuários")),
+      body: ListenableBuilder(
+        listenable: pessoaController,
+        builder: (context, child) {
+          return ListaPessoas(pessoas: pessoaController.pessoas);
+        },
+      ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.blueGrey,
+        onPressed: () {
+          Navigator.of(context).pushNamed(Routes.criarPessoaPage);
+        },
+        child: Icon(Icons.navigate_next),
+      ),
+    );
+  }
 
   @override
   void dispose() {
@@ -60,10 +60,9 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-    themeController.mensagemNotifier
-        .addListener(_onThemeMensagem);
-    pessoaController.mensagemNotifier
-        .addListener(_onPessoaMensagem);
+    pessoaController.ListarPessoas();
+    themeController.mensagemNotifier.addListener(_onThemeMensagem);
+    pessoaController.mensagemNotifier.addListener(_onPessoaMensagem);
     super.initState();
   }
 
@@ -72,13 +71,19 @@ class _HomePageState extends State<HomePage> {
     final value = pessoaController.mensagemNotifier.value;
 
     if (value is SuccessMessage) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
           backgroundColor: Colors.greenAccent,
-          content: Text(value.message)));
+          content: Text(value.message),
+        ),
+      );
     } else if (value is ErrorMessage) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
           backgroundColor: Colors.redAccent,
-          content: Text(value.message)));
+          content: Text(value.message),
+        ),
+      );
     }
   }
 
@@ -92,7 +97,7 @@ class _HomePageState extends State<HomePage> {
           content: Text(value.message),
         ),
       );
-    } else if(value is ErrorMessage){
+    } else if (value is ErrorMessage) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           backgroundColor: Colors.redAccent,
@@ -100,5 +105,5 @@ class _HomePageState extends State<HomePage> {
         ),
       );
     }
-    }
+  }
 }
