@@ -3,10 +3,17 @@ import 'package:dio/dio.dart';
 import '../models/pessoa.dart';
 
 class ApiClient {
-  final Dio dio = Dio();
+  final Dio dio;
+
+  final String apiUrl;
+
+  ApiClient({
+    required this.dio,
+    required this.apiUrl,
+  });
 
   Future<List<Pessoa>> get() async {
-    final request = await dio.get("http://localhost:3000/pessoas");
+    final request = await dio.get("$apiUrl/pessoas");
 
     if (request.statusCode == 200) {
       final data = request.data;
@@ -21,7 +28,7 @@ class ApiClient {
 
   Future<Pessoa> post(CriarPessoaDto criarPessoa) async {
     final request = await dio.post(
-      "http://localhost:3000/pessoas",
+      "$apiUrl/pessoas",
       data: criarPessoa.toJson(),
     );
 
@@ -33,7 +40,7 @@ class ApiClient {
 
   Future<void> delete(Pessoa pessoa) async {
     final request = await dio.delete(
-      "http://localhost:3000/pessoas/${pessoa.id}",
+      "$apiUrl/pessoas/${pessoa.id}",
     );
 
     if (request.statusCode == 200) {
@@ -44,7 +51,7 @@ class ApiClient {
 
   Future<void> put(Pessoa pessoa) async {
     final request = await dio.put(
-      "http://localhost:3000/pessoas/${pessoa.id}",
+      "$apiUrl/pessoas/${pessoa.id}",
       data: pessoa.toJson(),
     );
 

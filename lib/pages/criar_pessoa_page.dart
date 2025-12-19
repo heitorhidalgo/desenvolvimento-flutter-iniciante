@@ -28,7 +28,6 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
   @override
   void initState() {
     if(widget.pessoa != null){
-      print("Pessoa: ${widget.pessoa!.toJson()}");
       isEditing = true;
       Pessoa pessoa = widget.pessoa!;
       nomeController.text = pessoa.nome;
@@ -135,7 +134,7 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
                             );
                             await pessoaController.atualizarPessoa(pessoaAtualizada);
                           }
-                          Navigator.of(context).pop();
+                          if(context.mounted) Navigator.of(context).pop();
                         }
                       },
                       child: Text("Salvar"),

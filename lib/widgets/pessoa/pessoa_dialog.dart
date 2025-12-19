@@ -40,6 +40,7 @@ class PessoaDialog extends StatelessWidget {
               style:
               ElevatedButton.styleFrom(backgroundColor: Colors.white30),
               onPressed: () async {
+                Navigator.pop(context);
                 Navigator.of(context).pushNamed(Routes.criarPessoaPage, arguments: {
                   "pessoa": pessoa,
                 });

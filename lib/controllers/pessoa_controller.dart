@@ -9,13 +9,17 @@ class PessoaController extends ChangeNotifier {
 
   List<Pessoa> get pessoas => _pessoas;
 
-  final apiClient = ApiClient();
+  final ApiClient apiClient;
 
   ValueNotifier<MessagesStates> mensagemNotifier = ValueNotifier(
     IddleMessage(),
   );
 
   bool _loading = false;
+
+  PessoaController({
+    required this.apiClient
+  });
 
   bool get loading => _loading;
 
@@ -27,7 +31,11 @@ class PessoaController extends ChangeNotifier {
       final pessoas = await apiClient.get();
 
       _pessoas = pessoas;
-    } on Exception catch (error) {} finally {
+    } on Exception catch (_) {
+      mensagemNotifier.value = SuccessMessage(
+        message: "Ocorreu um erro ao buscar pessoas.",
+      );
+    } finally {
       _loading = false;
       notifyListeners();
     }
@@ -42,31 +50,33 @@ class PessoaController extends ChangeNotifier {
         message: "Pessoa adicionada com sucesso.",
       );
       notifyListeners();
-    } on Exception {
+    } on Exception catch(_) {
       mensagemNotifier.value = ErrorMessage(
         message: "Ocorreu um erro ao adicionar pessoa",
       );
     }
   }
 
-  Future  atualizarPessoa(Pessoa criarPessoa) async {
+  Future<void> atualizarPessoa(Pessoa atualizarPessoa) async {
+
     try {
-      final pessoa = await apiClient.put(criarPessoa);
+      await apiClient.put(atualizarPessoa);
 
-      final pessoaIndex = _pessoas.indexWhere((e) => e.id == pessoa.id);
-
-      _pessoas[pessoaIndex] = pessoa;
+      final pessoaIndex = _pessoas.indexWhere((e) => e.id == atualizarPessoa.id);
+      //
+      _pessoas[pessoaIndex] = atualizarPessoa;
 
       mensagemNotifier.value = SuccessMessage(
         message: "Pessoa atualizada com sucesso.",
       );
-    } on Exception catch(error) {
+    } on Exception catch(_) {
       mensagemNotifier.value = ErrorMessage(
         message: "Ocorreu um erro ao atualizar pessoa",
       );
     }finally{
       notifyListeners();
     }
+
   }
 
   Future<void> removerPessoa(Pessoa pessoa) async {
@@ -77,7 +87,9 @@ class PessoaController extends ChangeNotifier {
       mensagemNotifier.value = SuccessMessage(
         message: "Pessoa removida com sucesso.",
       );
-    } on Exception catch (error) {} finally {
+    } on Exception catch (_) {
+
+    } finally {
       notifyListeners();
     }
   }
