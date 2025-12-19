@@ -30,4 +30,13 @@ class ApiClient {
     }
     throw Exception("Ocorreu um erro ao adicionar pessoa");
   }
+
+  Future<void> delete(Pessoa pessoa) async {
+    final request = await dio.delete("http://localhost:3000/pessoas/${pessoa.id}");
+
+    if (request.statusCode == 200) {
+      return;
+    }
+    throw Exception("Ocorreu um erro ao remover pessoa");
+  }
 }

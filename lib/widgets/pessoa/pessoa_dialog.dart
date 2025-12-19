@@ -24,9 +24,9 @@ class PessoaDialog extends StatelessWidget {
             ElevatedButton(
               style:
               ElevatedButton.styleFrom(backgroundColor: Colors.redAccent),
-              onPressed: () {
-                pessoaController.removerPessoa(pessoa);
-                Navigator.of(context).pop();
+              onPressed: () async {
+                await pessoaController.removerPessoa(pessoa);
+                if(context.mounted) Navigator.of(context).pop();
               },
               child: Text(
                 "Excluir",
