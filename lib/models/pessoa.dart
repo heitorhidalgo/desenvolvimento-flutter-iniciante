@@ -28,4 +28,18 @@ class Pessoa {
       peso.toString(): peso,
     };
   }
+
+  Pessoa copyWith({
+    String? id,
+    String? nome,
+    int? altura,
+    double? peso,
+  }) {
+    return Pessoa(
+      id: id ?? this.id,
+      nome: nome ?? this.nome,
+      altura: altura ?? this.altura,
+      peso: peso ?? this.peso,
+    );
+  }
 }

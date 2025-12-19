@@ -4,6 +4,7 @@ import 'package:desenvolvimento_flutter_iniciante/widgets/core/default_dialog_co
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import '../../controllers/pessoa_controller.dart';
+import '../../routes/routes.dart';
 
 class PessoaDialog extends StatelessWidget {
   final Pessoa pessoa;
@@ -30,6 +31,23 @@ class PessoaDialog extends StatelessWidget {
               },
               child: Text(
                 "Excluir",
+                style: TextStyle(
+                  color: Colors.black,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              style:
+              ElevatedButton.styleFrom(backgroundColor: Colors.white30),
+              onPressed: () async {
+                Navigator.of(context).pushNamed(Routes.criarPessoaPage, arguments: {
+                  "pessoa": pessoa,
+                });
+                // await pessoaController.removerPessoa(pessoa);
+                // if(context.mounted) Navigator.of(context).pop();
+              },
+              child: Text(
+                "Editar",
                 style: TextStyle(
                   color: Colors.black,
                 ),
