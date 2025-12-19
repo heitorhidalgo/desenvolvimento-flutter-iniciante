@@ -32,7 +32,7 @@ class PessoaController extends ChangeNotifier {
 
       _pessoas = pessoas;
     } on Exception catch (_) {
-      mensagemNotifier.value = SuccessMessage(
+      mensagemNotifier.value = ErrorMessage(
         message: "Ocorreu um erro ao buscar pessoas.",
       );
     } finally {
@@ -63,7 +63,7 @@ class PessoaController extends ChangeNotifier {
       await apiClient.put(atualizarPessoa);
 
       final pessoaIndex = _pessoas.indexWhere((e) => e.id == atualizarPessoa.id);
-      //
+
       _pessoas[pessoaIndex] = atualizarPessoa;
 
       mensagemNotifier.value = SuccessMessage(

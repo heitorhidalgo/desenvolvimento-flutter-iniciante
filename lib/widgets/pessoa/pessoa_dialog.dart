@@ -44,8 +44,6 @@ class PessoaDialog extends StatelessWidget {
                 Navigator.of(context).pushNamed(Routes.criarPessoaPage, arguments: {
                   "pessoa": pessoa,
                 });
-                // await pessoaController.removerPessoa(pessoa);
-                // if(context.mounted) Navigator.of(context).pop();
               },
               child: Text(
                 "Editar",
@@ -74,7 +72,8 @@ class PessoaDialog extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Informações do usuário"),
+            Text("Informações do usuário",
+            style: TextStyle(color: Colors.black),),
             SizedBox(height: 8),
             DefaultDialogContainer(
               child: Text("Id: ${pessoa.id}"),
