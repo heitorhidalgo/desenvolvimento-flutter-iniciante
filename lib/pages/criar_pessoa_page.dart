@@ -89,7 +89,7 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
                 decoration: InputDecoration(
                   label: Text("Altura"),
                   border: OutlineInputBorder(),
-                  suffixText: ("cm (Ex: 170)"),
+                  suffixText: ("cm (Ex: 180)"),
                 ),
               ),
               gap,

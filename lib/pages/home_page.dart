@@ -52,6 +52,13 @@ class _HomePageState extends State<HomePage> {
     }
 
   @override
+  void dispose() {
+    pessoaController.mensagemNotifier.removeListener(_onPessoaMensagem);
+    themeController.mensagemNotifier.removeListener(_onThemeMensagem);
+    super.dispose();
+  }
+
+  @override
   void initState() {
     themeController.mensagemNotifier
         .addListener(_onThemeMensagem);
@@ -92,14 +99,6 @@ class _HomePageState extends State<HomePage> {
           content: Text(value.message),
         ),
       );
-    }
-
-
-    @override
-    void dispose() {
-      pessoaController.mensagemNotifier.removeListener(_onPessoaMensagem);
-      themeController.mensagemNotifier.removeListener(_onThemeMensagem);
-      super.dispose();
     }
     }
 }
