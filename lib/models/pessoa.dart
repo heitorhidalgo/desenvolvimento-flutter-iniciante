@@ -11,7 +11,7 @@ class Pessoa {
     required this.peso,
   });
 
-  factory Pessoa.fromJson(Map<String, dynamic> json){
+  factory Pessoa.fromJson(Map<String, dynamic> json) {
     return Pessoa(
       id: json["id"],
       nome: json["nome"],
@@ -20,4 +20,12 @@ class Pessoa {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      id: id,
+      nome: nome,
+      altura.toString(): altura,
+      peso.toString(): peso,
+    };
+  }
 }

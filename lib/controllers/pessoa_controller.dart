@@ -25,9 +25,9 @@ class PessoaController extends ChangeNotifier {
     try {
       await Future.delayed(Duration(milliseconds: 1));
       final pessoas = await apiClient.get();
+
       _pessoas = pessoas;
-    } on Exception catch (error) {
-    } finally {
+    } on Exception catch (error) {} finally {
       _loading = false;
       notifyListeners();
     }
@@ -52,12 +52,12 @@ class PessoaController extends ChangeNotifier {
   Future<void> removerPessoa(Pessoa pessoa) async {
     try {
       await apiClient.delete(pessoa);
+
       _pessoas.remove(pessoa);
       mensagemNotifier.value = SuccessMessage(
         message: "Pessoa removida com sucesso.",
       );
-    } on Exception catch (error) {
-    } finally {
+    } on Exception catch (error) {} finally {
       notifyListeners();
     }
   }
