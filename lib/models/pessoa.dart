@@ -13,19 +13,22 @@ class Pessoa {
 
   factory Pessoa.fromJson(Map<String, dynamic> json) {
     return Pessoa(
-      id: json["id"],
-      nome: json["nome"],
-      altura: json["altura"],
-      peso: json["peso"],
+      id: json["id"].toString(),
+
+      nome: json["nome"] ?? '',
+
+      altura: (json["altura"] as num).toInt(),
+
+      peso: (json["peso"] as num).toDouble(),
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      id: id,
-      nome: nome,
-      altura.toString(): altura,
-      peso.toString(): peso,
+      'id': id,
+      'nome': nome,
+      'altura': altura,
+      'peso': peso,
     };
   }
 

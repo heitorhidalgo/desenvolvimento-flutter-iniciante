@@ -4,7 +4,7 @@ import 'package:get_it/get_it.dart';
 import '../controllers/theme_controller.dart';
 import '../routes/routes.dart';
 import '../states/messages_state.dart';
-import '../widgets/pessoa/lista_pessoas.dart';
+import '../widgets/lista_pessoas.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});

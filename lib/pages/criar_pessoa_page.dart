@@ -7,9 +7,10 @@ import '../models/pessoa.dart';
 
 class CriarPessoaPage extends StatefulWidget {
   final Pessoa? pessoa;
-  const CriarPessoaPage ({
+
+  const CriarPessoaPage({
     super.key,
-    required this.pessoa,
+    this.pessoa,
   });
 
   @override
@@ -17,136 +18,25 @@ class CriarPessoaPage extends StatefulWidget {
 }
 
 class _CriarPessoaPageState extends State<CriarPessoaPage> {
-  final gap = SizedBox(height: 16);
   final nomeController = TextEditingController();
   final pesoController = TextEditingController();
   final alturaController = TextEditingController();
+
   final formKey = GlobalKey<FormState>();
+
   final pessoaController = GetIt.instance<PessoaController>();
-  bool isEditing = false;
+
+  bool get isEditing => widget.pessoa != null;
 
   @override
   void initState() {
-    if(widget.pessoa != null){
-      isEditing = true;
-      Pessoa pessoa = widget.pessoa!;
-      nomeController.text = pessoa.nome;
-      pesoController.text = pessoa.peso.toString().replaceAll(".", ",");
-      alturaController.text = pessoa.altura.toString();
-    }
     super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-
-    return Scaffold(appBar: AppBar(
-      title: Text("Cadastro de usuário"),
-    ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value?.isEmpty == true) {
-                    return "Por favor, preencha o nome!";
-                  }
-                  final nomeCompleto = value!.split(" ");
-
-                  if(nomeCompleto.length < 2){
-                    return "Por favor, preencha o nome completo!";
-                  }
-                  return null;
-                },
-                controller: nomeController,
-                decoration: InputDecoration(
-                  label: Text("Nome"),
-                  border: OutlineInputBorder(),
-                  suffixText: ("Ex: João Guilherme"),
-                ),
-              ),
-              gap,
-              TextFormField(
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                keyboardType: TextInputType.numberWithOptions(decimal: true),
-                inputFormatters: [
-                  FilteringTextInputFormatter.allow(RegExp(r'^\d+[,]?\d{0,1}'))
-                ],
-                validator: (value) {
-                  if (value?.isEmpty == true) {
-                    return "Por favor, preencha o peso!";
-                  }
-                  return null;
-                },
-                controller: pesoController,
-                decoration: InputDecoration(
-                  label: Text("Peso"),
-                  border: OutlineInputBorder(),
-                  suffixText: ("Kg (Ex: 70,5)"),
-                ),
-              ),
-              gap,
-              TextFormField(
-                keyboardType: TextInputType.number,
-                inputFormatters: [
-                  FilteringTextInputFormatter.digitsOnly,
-                ],
-
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-                validator: (value) {
-                  if (value?.isEmpty == true) {
-                    return "Por favor, preencha a altura!";
-                  }
-                  return null;
-                },
-                controller: alturaController,
-                decoration: InputDecoration(
-                  label: Text("Altura"),
-                  border: OutlineInputBorder(),
-                  suffixText: ("cm (Ex: 180)"),
-                ),
-              ),
-              gap,
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      onPressed: () async {
-                        if(formKey.currentState?.validate() == true){
-
-                          if(!isEditing){
-                            final criarPessoa = CriarPessoaDto(
-                              nome: nomeController.text,
-                              altura: int.parse(alturaController.text),
-                              peso: double.parse(pesoController.text.replaceAll(",", ".")),
-                            );
-
-                          await pessoaController.adicionarPessoa(criarPessoa);
-                          }else{
-                            final pessoaAtualizada = widget.pessoa!.copyWith(
-                              nome: nomeController.text,
-                              altura: int.parse(alturaController.text),
-                              peso: double.parse(pesoController.text.replaceAll(",", ".")),
-                            );
-                            await pessoaController.atualizarPessoa(pessoaAtualizada);
-                          }
-                          if(context.mounted) Navigator.of(context).pop();
-                        }
-                      },
-                      child: Text("Salvar"),
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      )
-    );
+    if (isEditing) {
+      final p = widget.pessoa!;
+      nomeController.text = p.nome;
+      pesoController.text = p.peso.toString().replaceAll(".", ",");
+      alturaController.text = p.altura.toString();
+    }
   }
 
   @override
@@ -155,5 +45,154 @@ class _CriarPessoaPageState extends State<CriarPessoaPage> {
     pesoController.dispose();
     alturaController.dispose();
     super.dispose();
+  }
+
+  Future<void> _salvar() async {
+    if (!formKey.currentState!.validate()) return;
+
+    final pesoFormatado = double.tryParse(pesoController.text.replaceAll(",", "."));
+    final alturaFormatada = int.tryParse(alturaController.text);
+
+    if (pesoFormatado == null || alturaFormatada == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Verifique os números digitados.")),
+      );
+      return;
+    }
+
+    if (!isEditing) {
+      final dto = CriarPessoaDto(
+        nome: nomeController.text.trim(),
+        altura: alturaFormatada,
+        peso: pesoFormatado,
+      );
+      await pessoaController.adicionarPessoa(dto);
+    } else {
+      final pessoaAtualizada = widget.pessoa!.copyWith(
+        nome: nomeController.text.trim(),
+        altura: alturaFormatada,
+        peso: pesoFormatado,
+      );
+      await pessoaController.atualizarPessoa(pessoaAtualizada);
+    }
+
+    if (context.mounted) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    const gap = SizedBox(height: 16);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(isEditing ? "Editar Pessoa" : "Nova Pessoa"),
+      ),
+      body: ListenableBuilder(
+        listenable: pessoaController,
+        builder: (context, child) {
+          return AbsorbPointer(
+            absorbing: pessoaController.loading,
+            child: child,
+          );
+        },
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
+          child: Form(
+            key: formKey,
+            child: Column(
+              children: [
+                TextFormField(
+                  controller: nomeController,
+                  textCapitalization: TextCapitalization.words, // João Da Silva
+                  textInputAction: TextInputAction.next, // Botão "Próximo"
+                  decoration: const InputDecoration(
+                    labelText: "Nome Completo",
+                    prefixIcon: Icon(Icons.person),
+                    hintText: "Ex: João Guilherme",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.trim().isEmpty) {
+                      return "Por favor, preencha o nome.";
+                    }
+                    if (value.trim().split(" ").length < 2) {
+                      return "Informe nome e sobrenome.";
+                    }
+                    return null;
+                  },
+                ),
+                gap,
+
+                TextFormField(
+                  controller: pesoController,
+                  keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                  textInputAction: TextInputAction.next,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.allow(RegExp(r'[0-9,]')),
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: "Peso (Kg)",
+                    prefixIcon: Icon(Icons.monitor_weight),
+                    suffixText: "Kg",
+                    hintText: "Ex: 70,5",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return "Campo obrigatório";
+                    return null;
+                  },
+                ),
+                gap,
+
+                TextFormField(
+                  controller: alturaController,
+                  keyboardType: TextInputType.number,
+                  textInputAction: TextInputAction.done, // Botão "OK" fecha teclado
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                  ],
+                  decoration: const InputDecoration(
+                    labelText: "Altura (cm)",
+                    prefixIcon: Icon(Icons.height),
+                    suffixText: "cm",
+                    hintText: "Ex: 180",
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) return "Campo obrigatório";
+                    return null;
+                  },
+                  onFieldSubmitted: (_) => _salvar(),
+                ),
+                const SizedBox(height: 32),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 50,
+                  child: ListenableBuilder(
+                    listenable: pessoaController,
+                    builder: (context, _) {
+                      if (pessoaController.loading) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }
+
+                      return ElevatedButton.icon(
+                        onPressed: _salvar,
+                        icon: const Icon(Icons.save),
+                        label: Text(
+                          isEditing ? "Atualizar Dados" : "Cadastrar Pessoa",
+                          style: const TextStyle(fontSize: 16),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }

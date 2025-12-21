@@ -12,7 +12,7 @@ class ThemeController extends ChangeNotifier {
   });
 
   ValueNotifier<MessagesStates> mensagemNotifier =
-  ValueNotifier(IddleMessage());
+  ValueNotifier(IdleMessage());
 
 
   void toggleTheme(bool value) async {

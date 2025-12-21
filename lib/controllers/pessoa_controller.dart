@@ -16,7 +16,7 @@ class PessoaController extends ChangeNotifier {
   bool get loading => _loading;
 
   final ValueNotifier<MessagesStates> mensagemNotifier = ValueNotifier(
-    IddleMessage(),
+    IdleMessage(),
   );
 
   Future<void> listarPessoas() async {
