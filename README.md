@@ -50,7 +50,7 @@ lib/
 ### Passo 1: Clonar e Instalar Dependências
 
 ```bash
-git clone <seu-link-do-repositorio>
+git clone https://github.com/heitorhidalgo/desenvolvimento-flutter-iniciante
 cd desenvolvimento_flutter_iniciante
 flutter pub get
 ```
